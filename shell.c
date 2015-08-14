@@ -11,7 +11,7 @@
 #define FALSE 0
 #define TRUE 1
 #define INPUT_STRING_SIZE 80
-
+#define homeDirectory "cygdrive/c/Users/Sango/My Documents/GitHub/coms2001-master/coms2001-master" 
 #include "io.h"
 #include "parse.h"
 #include "process.h"
@@ -35,6 +35,14 @@ int cmd_cd(tok_t arg[])
     }
   else
     {
+      if (arg[0]==0)
+	{
+	  // Handle case:
+	  // cd
+
+	}
+      else
+	{
   fileNames=strtok(arg[0],"/");
   while (fileNames != NULL)
     {
@@ -48,7 +56,9 @@ int cmd_cd(tok_t arg[])
 	  fileNames=strtok(NULL,"/");
 	}
     }
+	
  
+    }
     }
       getcwd(directory,INPUT_STRING_SIZE);
       printf("%s",directory);
