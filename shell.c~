@@ -24,22 +24,11 @@ int cmd_quit(tok_t arg[]) {
 }
 int cmd_ls(tok_t arg[])
 {
-  /*  char directory[INPUT_STRING_SIZE];
-  //printf("Hello\n %s\n",getenv("PATH"));
-  char *roots=getenv("PATH");
-  const char* files="hw1";
-    const char* files1="hw2";
-    if (execlp(roots,files,files1,(char*)0)==-1)
-    {
-      printf("Failed\n");
-    }
-  else
-    {
-      printf("Success\n");
-    }
+  char directory[INPUT_STRING_SIZE];
+  printf("Hello\n %s\n",getenv("PATH"));
   
-*/
-} 
+}
+	 
 int cmd_help(tok_t arg[]);
 int cmd_cd(tok_t arg[])
 {
