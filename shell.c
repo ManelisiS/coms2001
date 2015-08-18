@@ -25,14 +25,26 @@ int cmd_quit(tok_t arg[]) {
 void tryCommand(tok_t arg[])
 {
   tok_t* paths=getToks(getenv("PATH"));
-  
+  char* testString=arg[0];
+  char **stringPaths=paths;
   int test=execl(arg[0],arg[0],arg[1],NULL);
   if (test!=-1)
     {
       printf("This shell supports the commands in the table\n");
     }
+  else
+    {
+      int i;
+      for (i=0;i<30;i++)
+	{
+	  char *runnable=strcat(stringPaths[i],"/");
+	  char *runnable2=strcat(stringPaths[i],arg[0]);
+	  printf("%s\n",runnable2);
+	  
+	}
+    }
   
-
+ 
 } 
 int cmd_help(tok_t arg[]);
 int printDirectory()
