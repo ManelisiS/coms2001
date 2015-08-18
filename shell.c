@@ -22,25 +22,25 @@ int cmd_quit(tok_t arg[]) {
   exit(0);
   return 1;
 }
-int cmd_ls(tok_t arg[])
+void tryCommand(tok_t arg[])
 {
-  /*  char directory[INPUT_STRING_SIZE];
-  //printf("Hello\n %s\n",getenv("PATH"));
-  char *roots=getenv("PATH");
-  const char* files="hw1";
-    const char* files1="hw2";
-    if (execlp(roots,files,files1,(char*)0)==-1)
+  tok_t* paths=getToks(getenv("PATH"));
+  
+  int test=execl(arg[0],arg[0],arg[1],NULL);
+  if (test!=-1)
     {
-      printf("Failed\n");
-    }
-  else
-    {
-      printf("Success\n");
+      printf("This shell supports the commands in the table\n");
     }
   
-*/
+
 } 
 int cmd_help(tok_t arg[]);
+int printDirectory()
+{
+  char directory[INPUT_STRING_SIZE];
+  printf("%s ",getcwd(directory,INPUT_STRING_SIZE));
+  return 0;
+}
 int cmd_cd(tok_t arg[])
 {
   char *names[100];
@@ -50,6 +50,7 @@ int cmd_cd(tok_t arg[])
   if (strcmp(arg[0],"..")==0)
     {
       chdir("..");
+      
     }
   else
     {
@@ -62,6 +63,7 @@ int cmd_cd(tok_t arg[])
       if (chdir(fileNames)==-1)
 	{
 	  printf("%s does not exist.\n",fileNames);
+	  printDirectory();
 	  return 0;
 	}
 	
@@ -75,7 +77,8 @@ int cmd_cd(tok_t arg[])
     }
     
       getcwd(directory,INPUT_STRING_SIZE);
-      printf("%s",directory);
+      printDirectory();
+      return 1;
   
 }
 /* Command Lookup table */
@@ -90,7 +93,7 @@ fun_desc_t cmd_table[] = {
   {cmd_help, "?", "show this help menu"},
   {cmd_quit, "quit", "quit the command shell"},
   {cmd_cd,"cd","changes directory"},
-  {cmd_ls,"ls","lists all the subdirectories of the current directory"},
+  /*{cmd_ls,"ls","lists all the subdirectories of the current directory"},*/
 };
 
 int cmd_help(tok_t arg[]) {
@@ -165,12 +168,13 @@ int shell (int argc, char *argv[]) {
   pid_t pid = getpid();		/* get current processes PID */
   pid_t ppid = getppid();	/* get parents PID */
   pid_t cpid, tcpid, cpgid;
-
+  int status;
   init_shell();
 
   printf("%s running as PID %d under %d\n",argv[0],pid,ppid);
 
   lineNum=0;
+  printDirectory();
   fprintf(stdout, "%d: ", lineNum);
   while ((s = freadln(stdin))){
     t = getToks(s); /* break the line into tokens */
@@ -179,10 +183,34 @@ int shell (int argc, char *argv[]) {
       {
       cmd_table[fundex].fun(&t[1]);
       }
+	
     else {
-      fprintf(stdout, "This shell only supports built-ins. Replace this to run programs as commands.\n");
-    };
-    fprintf(stdout, "%d: ", lineNum);
-  }
-  return 0;
+
+      //This space is reserved for forking test
+      pid_t cpid=fork();
+      if (cpid==0)
+	{
+	  
+	  tryCommand(t);
+	}
+      else
+	{
+	  tcpid=wait(&status);
+	  while (tcpid!=cpid)
+	    {
+	      tcpid=wait(&status);
+	      if (tcpid==cpid)
+		{
+		  printf("Child was terminated\n");
+		}
+	    }
+	      
+	      //fprintf(stdout, "This shell only supports built-ins.\n");
+      printDirectory();
+      //fprintf(stdout, "%d: ", lineNum++);
+	}
+       
+    }
+  };
 }
+  
