@@ -22,26 +22,45 @@ int cmd_quit(tok_t arg[]) {
   exit(0);
   return 1;
 }
+char* concat(char *s1, char *s2)
+{
+  char *result = malloc(strlen(s1)+strlen(s2)+1);//+1 for the zero-terminator
+  //in real code you would check for errors in malloc here
+  strcpy(result, s1);
+  strcat(result, s2);
+  return result;
+}
+		  
+      
 void tryCommand(tok_t arg[])
 {
+  
   tok_t* paths=getToks(getenv("PATH"));
-  char* testString=arg[0];
+  char *testPaths[INPUT_STRING_SIZE];
+  
+  int j;
+ 
   char **stringPaths=paths;
   int test=execl(arg[0],arg[0],arg[1],NULL);
+  
   if (test!=-1)
     {
       printf("This shell supports the commands in the table\n");
     }
   else
     {
-      int i;
+       int i;
       for (i=0;i<30;i++)
 	{
-	  char *runnable=strcat(stringPaths[i],"/");
-	  char *runnable2=strcat(stringPaths[i],arg[0]);
-	  printf("%s\n",runnable2);
 	  
-	}
+	  char *runnable=concat(stringPaths[i],"/");
+	  char *runnable2=concat(runnable,arg[0]);
+	  if (execl(runnable2,runnable2,arg[1],NULL)==-1 && i==29)
+	    {
+	      printf("This shell supports the commands in the table\n");
+	    }
+	  
+	  }
     }
   
  
